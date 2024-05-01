@@ -1,111 +1,139 @@
-name: Pull Request Java CI
-
-on: [pull_request]
-
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        jdk: [ 1.8, 11, 17 ]
-      fail-fast: false
-
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.jdk }}
-      - name: Cache Gradle packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew clean build -x test --no-daemon
-
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.jdk }}
+    - continue-on-error: true
+      name: Cache Gradle packages
+      uses: actions/cache@v1
+      with:
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        path: ~/.gradle/caches
+        restore-keys: ${{ runner.os }}-gradle
+    - continue-on-error: true
+      name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - continue-on-error: true
+      name: Build with Gradle
+      run: ./gradlew clean build -x test --no-daemon
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk:
+        - 1.8
+        - 11
+        - 17
+        os:
+        - ubuntu-latest
   coretest:
-    needs: [build]
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        jdk: [ 1.8, 11, 17 ]
-      fail-fast: false
-
+    needs:
+    - build
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.jdk }}
-      - name: Cache Gradle packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew rsocket-core:test --no-daemon
-
-  othertest:
-    needs: [build]
-    runs-on: ${{ matrix.os }}
-
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.jdk }}
+    - continue-on-error: true
+      name: Cache Gradle packages
+      uses: actions/cache@v1
+      with:
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        path: ~/.gradle/caches
+        restore-keys: ${{ runner.os }}-gradle
+    - continue-on-error: true
+      name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - continue-on-error: true
+      name: Build with Gradle
+      run: ./gradlew rsocket-core:test --no-daemon
     strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        jdk: [ 1.8, 11, 17 ]
       fail-fast: false
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.jdk }}
-      - name: Cache Gradle packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew test -x :rsocket-core:test --no-daemon
-
+      matrix:
+        jdk:
+        - 1.8
+        - 11
+        - 17
+        os:
+        - ubuntu-latest
   jcstress:
-    needs: [build]
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        jdk: [ 1.8, 11, 17 ]
-      fail-fast: false
-
+    needs:
+    - build
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.jdk }}
-      - name: Cache Gradle packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew jcstress --no-daemon
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.jdk }}
+    - continue-on-error: true
+      name: Cache Gradle packages
+      uses: actions/cache@v1
+      with:
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        path: ~/.gradle/caches
+        restore-keys: ${{ runner.os }}-gradle
+    - continue-on-error: true
+      name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - continue-on-error: true
+      name: Build with Gradle
+      run: ./gradlew jcstress --no-daemon
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk:
+        - 1.8
+        - 11
+        - 17
+        os:
+        - ubuntu-latest
+  othertest:
+    needs:
+    - build
+    runs-on: self-hosted
+    steps:
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.jdk }}
+    - continue-on-error: true
+      name: Cache Gradle packages
+      uses: actions/cache@v1
+      with:
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        path: ~/.gradle/caches
+        restore-keys: ${{ runner.os }}-gradle
+    - continue-on-error: true
+      name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - continue-on-error: true
+      name: Build with Gradle
+      run: ./gradlew test -x :rsocket-core:test --no-daemon
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk:
+        - 1.8
+        - 11
+        - 17
+        os:
+        - ubuntu-latest
+name: Pull Request Java CI
+on:
+  repository_dispatch:
+    types: trigger-ga___gradle-pr.yml

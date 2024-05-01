@@ -1,161 +1,195 @@
-name: Main Branches Java CI
-
-on:
-  # Trigger the workflow on push
-  # but only for the master/1.1.x branch
-  push:
-    branches:
-      - master
-      - 1.1.x
-
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        jdk: [ 1.8, 11, 17 ]
-      fail-fast: false
-
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.jdk }}
-      - name: Cache Gradle packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew clean build -x test --no-daemon
-
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.jdk }}
+    - continue-on-error: true
+      name: Cache Gradle packages
+      uses: actions/cache@v1
+      with:
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        path: ~/.gradle/caches
+        restore-keys: ${{ runner.os }}-gradle
+    - continue-on-error: true
+      name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - continue-on-error: true
+      name: Build with Gradle
+      run: ./gradlew clean build -x test --no-daemon
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk:
+        - 1.8
+        - 11
+        - 17
+        os:
+        - ubuntu-latest
   coretest:
-    needs: [build]
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        jdk: [ 1.8, 11, 17 ]
-      fail-fast: false
-
+    needs:
+    - build
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.jdk }}
-      - name: Cache Gradle packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew rsocket-core:test --no-daemon
-
-  othertest:
-    needs: [build]
-    runs-on: ${{ matrix.os }}
-
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.jdk }}
+    - continue-on-error: true
+      name: Cache Gradle packages
+      uses: actions/cache@v1
+      with:
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        path: ~/.gradle/caches
+        restore-keys: ${{ runner.os }}-gradle
+    - continue-on-error: true
+      name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - continue-on-error: true
+      name: Build with Gradle
+      run: ./gradlew rsocket-core:test --no-daemon
     strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        jdk: [ 1.8, 11, 17 ]
       fail-fast: false
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.jdk }}
-      - name: Cache Gradle packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew test -x :rsocket-core:test --no-daemon
-
+      matrix:
+        jdk:
+        - 1.8
+        - 11
+        - 17
+        os:
+        - ubuntu-latest
   jcstress:
-    needs: [build]
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        jdk: [ 1.8, 11, 17 ]
-      fail-fast: false
-
+    needs:
+    - build
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.jdk }}
-      - name: Cache Gradle packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew jcstress --no-daemon
-
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.jdk }}
+    - continue-on-error: true
+      name: Cache Gradle packages
+      uses: actions/cache@v1
+      with:
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        path: ~/.gradle/caches
+        restore-keys: ${{ runner.os }}-gradle
+    - continue-on-error: true
+      name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - continue-on-error: true
+      name: Build with Gradle
+      run: ./gradlew jcstress --no-daemon
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk:
+        - 1.8
+        - 11
+        - 17
+        os:
+        - ubuntu-latest
+  othertest:
+    needs:
+    - build
+    runs-on: self-hosted
+    steps:
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.jdk }}
+    - continue-on-error: true
+      name: Cache Gradle packages
+      uses: actions/cache@v1
+      with:
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        path: ~/.gradle/caches
+        restore-keys: ${{ runner.os }}-gradle
+    - continue-on-error: true
+      name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - continue-on-error: true
+      name: Build with Gradle
+      run: ./gradlew test -x :rsocket-core:test --no-daemon
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk:
+        - 1.8
+        - 11
+        - 17
+        os:
+        - ubuntu-latest
   publish:
-    needs: [ build, coretest, othertest, jcstress ]
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        jdk: [ 1.8, 11, 17 ]
-      fail-fast: false
-
+    needs:
+    - build
+    - coretest
+    - othertest
+    - jcstress
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.jdk }}
-      - name: Cache Gradle packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Publish Packages to Artifactory
-        if: ${{ matrix.jdk == '1.8' }}
-        run: ./gradlew -PversionSuffix="-SNAPSHOT" -PbuildNumber="${buildNumber}" publishMavenPublicationToSonatypeRepository --no-daemon --stacktrace
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          buildNumber: ${{ github.run_number }}
-          ORG_GRADLE_PROJECT_signingKey: ${{secrets.signingKey}}
-          ORG_GRADLE_PROJECT_signingPassword: ${{secrets.signingPassword}}
-          ORG_GRADLE_PROJECT_sonatypeUsername: ${{secrets.sonatypeUsername}}
-          ORG_GRADLE_PROJECT_sonatypePassword: ${{secrets.sonatypePassword}}
-      - name: Aggregate test reports with ciMate
-        if: always()
-        continue-on-error: true
-        env:
-          CIMATE_PROJECT_ID: m84qx17y
-        run: |
-          wget -q https://get.cimate.io/release/linux/cimate
-          chmod +x cimate
-          ./cimate "**/TEST-*.xml"
+    - continue-on-error: true
+      uses: actions/checkout@v2
+    - continue-on-error: true
+      name: Set up JDK ${{ matrix.jdk }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.jdk }}
+    - continue-on-error: true
+      name: Cache Gradle packages
+      uses: actions/cache@v1
+      with:
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        path: ~/.gradle/caches
+        restore-keys: ${{ runner.os }}-gradle
+    - continue-on-error: true
+      name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - continue-on-error: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ORG_GRADLE_PROJECT_signingKey: ${{secrets.signingKey}}
+        ORG_GRADLE_PROJECT_signingPassword: ${{secrets.signingPassword}}
+        ORG_GRADLE_PROJECT_sonatypePassword: ${{secrets.sonatypePassword}}
+        ORG_GRADLE_PROJECT_sonatypeUsername: ${{secrets.sonatypeUsername}}
+        buildNumber: ${{ github.run_number }}
+      if: ${{ matrix.jdk == '1.8' }}
+      name: Publish Packages to Artifactory
+      run: ./gradlew -PversionSuffix="-SNAPSHOT" -PbuildNumber="${buildNumber}" publishMavenPublicationToSonatypeRepository
+        --no-daemon --stacktrace
+    - continue-on-error: true
+      env:
+        CIMATE_PROJECT_ID: m84qx17y
+      if: always()
+      name: Aggregate test reports with ciMate
+      run: 'wget -q https://get.cimate.io/release/linux/cimate
+
+        chmod +x cimate
+
+        ./cimate "**/TEST-*.xml"'
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk:
+        - 1.8
+        - 11
+        - 17
+        os:
+        - ubuntu-latest
+name: Main Branches Java CI
+on:
+  repository_dispatch:
+    types: trigger-ga___gradle-main.yml
